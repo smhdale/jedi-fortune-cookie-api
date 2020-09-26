@@ -1,4 +1,5 @@
 type Episode = {
+	_id: string
 	season: number
 	episode: number
 	title: string

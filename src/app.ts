@@ -13,7 +13,7 @@ app.use(errorMiddleware)
 // Routes
 router.get('/', async (ctx) => {
 	const episode = await Episode.findByRandomFortune()
-	if (episode) ctx.body = episode
+	if (episode) ctx.body = Episode.sanitise(episode)
 	else throw 404
 })
 

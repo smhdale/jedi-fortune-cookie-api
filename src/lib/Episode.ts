@@ -4,7 +4,7 @@ class EpisodeStore extends Datastore<Episode> {
 	private static Wookieepedia = 'https://starwars.fandom.com/wiki/'
 	private static IMDB = 'https://imdb.com/title/'
 
-	private static saturate(episode: Episode): Episode {
+	private static hydrate(episode: Episode): Episode {
 		return {
 			...episode,
 			links: {
@@ -14,18 +14,28 @@ class EpisodeStore extends Datastore<Episode> {
 		}
 	}
 
+	sanitise(episode: Episode): Omit<Episode, '_id'> {
+		return {
+			season: episode.season,
+			episode: episode.episode,
+			title: episode.title,
+			jediFortuneCookie: episode.jediFortuneCookie,
+			links: { ...episode.links },
+		}
+	}
+
 	async findBySeasonAndEpisode(season: number, episode: number) {
 		const doc = await this.findOne({ season, episode })
-		if (doc !== null) return EpisodeStore.saturate(doc)
+		if (doc !== null) return EpisodeStore.hydrate(doc)
 		else return doc
 	}
 
 	async findByRandomFortune() {
-		const docs = await this.find({})
+		const docs = await this.find({ jediFortuneCookie: { $ne: null } })
 		const count = docs.length
 		if (count) {
 			const index = Math.floor(Math.random() * count)
-			return EpisodeStore.saturate(docs[index])
+			return EpisodeStore.hydrate(docs[index])
 		} else {
 			return null
 		}

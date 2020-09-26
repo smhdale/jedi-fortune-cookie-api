@@ -3,9 +3,10 @@
   "version": "0.0.1",
   "description": "A simple REST API for the Jedi fortune cookie messages found in each episode of Star Wars: The Clone Wars.",
   "main": "dist/app.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node dist/app.js\"",
-    "build": "tsc",
+    "build": "rm -rf ./dist && tsc",
     "serve": "node dist/app.js",
     "lint": "prettier --write ./src/**/*.ts"
   },

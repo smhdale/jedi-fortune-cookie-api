@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node dist/app.js\"",
     "build": "tsc",
-    "serve": "",
+    "serve": "node dist/app.js",
     "lint": "prettier --write ./src/**/*.ts"
   },
   "repository": {

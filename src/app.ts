@@ -2,14 +2,19 @@ import Koa from 'koa'
 import Router from 'koa-router'
 import Episode from './lib/Episode'
 
+import errorMiddleware from './middleware/error'
+
 const app = new Koa()
 const router = new Router()
 
+// Error handler
+app.use(errorMiddleware)
+
 // Routes
-router.get('/', async (ctx, next) => {
+router.get('/', async (ctx) => {
 	const episode = await Episode.findByRandomFortune()
 	if (episode) ctx.body = episode
-	else ctx.throw(404)
+	else throw 404
 })
 
 // App

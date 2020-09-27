@@ -14,13 +14,12 @@ app.use(errorMiddleware)
 app.use(userMiddleware)
 
 // Home page
-router.get('/', async (ctx, next) => {
+router.get('/', async (ctx) => {
 	ctx.body = { status: 200, message: 'Hello there.' }
-	await next()
 })
 
 // Random episode
-router.get('/random', async (ctx, next) => {
+router.get('/random', async (ctx) => {
 	let user: User | undefined = ctx.state.user
 
 	// If user has seen every episode, reset seen array
@@ -39,11 +38,10 @@ router.get('/random', async (ctx, next) => {
 
 	// Return episode
 	ctx.body = Episode.sanitise(doc)
-	await next()
 })
 
 // Exact episode
-router.get('/episode/:season/:episode', async (ctx, next) => {
+router.get('/episode/:season/:episode', async (ctx) => {
 	const { season, episode } = ctx.params
 	const doc = await Episode.findBySeasonAndEpisode(
 		Number(season),
@@ -51,20 +49,22 @@ router.get('/episode/:season/:episode', async (ctx, next) => {
 	)
 	if (!doc) throw 404
 	ctx.body = Episode.sanitise(doc)
-	await next()
 })
 
 // Entire season
-router.get('/season/:season', async (ctx, next) => {
+router.get('/season/:season', async (ctx) => {
 	const { season } = ctx.params
 	const docs = await Episode.findBySeason(Number(season))
 	if (!docs.length) throw 404
 	ctx.body = docs.map(Episode.sanitise)
-	await next()
 })
 
 // App
 app.use(router.routes()).use(router.allowedMethods())
+app.use(async () => {
+	throw 404
+})
+
 app.listen(3000, async () => {
 	console.log('May the Force be with you.')
 })

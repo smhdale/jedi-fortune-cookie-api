@@ -1,6 +1,7 @@
 import Koa from 'koa'
 import Router from 'koa-router'
 import logger from 'koa-logger'
+import { RateLimit as limit } from 'koa2-ratelimit'
 
 import Episode from './lib/Episode'
 import User from './lib/User'
@@ -16,6 +17,17 @@ const router = new Router()
 app.use(logger())
 app.use(errorMiddleware)
 app.use(userMiddleware)
+app.use(
+	limit.middleware({
+		interval: 30000,
+		delayAfter: 20,
+		timeWait: 1000,
+		max: 50,
+		handler() {
+			throw 429
+		},
+	})
+)
 
 // Home page
 router.get('/', async (ctx) => {

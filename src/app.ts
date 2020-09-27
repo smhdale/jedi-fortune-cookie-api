@@ -75,8 +75,12 @@ app.use(async () => {
 	throw 404
 })
 
-app.on('track', (episode: Episode) => {
-	Stat.track(episode)
+app.on('track', async (episode: Episode) => {
+	try {
+		await Stat.track(episode)
+	} catch (err) {
+		console.error('Failed to track episode:', err.message)
+	}
 })
 
 app.listen(3000, async () => {

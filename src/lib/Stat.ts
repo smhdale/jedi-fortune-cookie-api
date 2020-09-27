@@ -14,7 +14,7 @@ class StatStore extends Datastore<Stat> {
 	}
 
 	track({ _id }: Episode) {
-		this.updateOne({ _id }, { $inc: { views: 1 } })
+		return this.updateOne({ _id }, { $inc: { views: 1 } })
 	}
 }
 

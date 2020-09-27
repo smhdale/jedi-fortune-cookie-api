@@ -2,6 +2,7 @@ import Koa from 'koa'
 import Router from 'koa-router'
 import Episode from './lib/Episode'
 import User from './lib/User'
+import Stat from './lib/Stat'
 
 import errorMiddleware from './middleware/error'
 import userMiddleware from './middleware/user'
@@ -36,7 +37,8 @@ router.get('/random', async (ctx) => {
 	// If user, mark episode as seen
 	if (user) user = await User.markSeen(user._id, doc._id)
 
-	// Return episode
+	// Track and return episode
+	ctx.app.emit('track', doc)
 	ctx.body = Episode.sanitise(doc)
 })
 
@@ -48,6 +50,9 @@ router.get('/episode/:season/:episode', async (ctx) => {
 		Number(episode)
 	)
 	if (!doc) throw 404
+
+	// Track and return episode
+	ctx.app.emit('track', doc)
 	ctx.body = Episode.sanitise(doc)
 })
 
@@ -56,6 +61,11 @@ router.get('/season/:season', async (ctx) => {
 	const { season } = ctx.params
 	const docs = await Episode.findBySeason(Number(season))
 	if (!docs.length) throw 404
+
+	// Track and return season
+	docs.forEach((doc) => {
+		ctx.app.emit('track', doc)
+	})
 	ctx.body = docs.map(Episode.sanitise)
 })
 
@@ -65,6 +75,11 @@ app.use(async () => {
 	throw 404
 })
 
+app.on('track', (episode: Episode) => {
+	Stat.track(episode.season, episode.episode)
+})
+
 app.listen(3000, async () => {
+	await Stat.bootstrap()
 	console.log('May the Force be with you.')
 })

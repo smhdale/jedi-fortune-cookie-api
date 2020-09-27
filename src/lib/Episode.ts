@@ -54,6 +54,10 @@ class EpisodeStore extends Datastore<Episode> {
 			return null
 		}
 	}
+
+	async findAll() {
+		return this.find({})
+	}
 }
 
 export default new EpisodeStore('../../db/episodes.db')

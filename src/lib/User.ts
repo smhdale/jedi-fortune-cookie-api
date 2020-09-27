@@ -18,4 +18,4 @@ class UserStore extends Datastore<User> {
 	}
 }
 
-export default new UserStore('../../db/users.db')
+export default new UserStore('../../db/users.db', 86400000)

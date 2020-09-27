@@ -1,5 +1,7 @@
 import Koa from 'koa'
 import Router from 'koa-router'
+import logger from 'koa-logger'
+
 import Episode from './lib/Episode'
 import User from './lib/User'
 import Stat from './lib/Stat'
@@ -11,6 +13,7 @@ const app = new Koa()
 const router = new Router()
 
 // Middlewares
+app.use(logger())
 app.use(errorMiddleware)
 app.use(userMiddleware)
 

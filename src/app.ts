@@ -1,6 +1,7 @@
 import Koa from 'koa'
 import Router from 'koa-router'
 import logger from 'koa-logger'
+import noCache from 'koa-no-cache'
 import { RateLimit as limit } from 'koa2-ratelimit'
 
 import Episode from './lib/Episode'
@@ -17,6 +18,7 @@ const router = new Router()
 app.use(logger())
 app.use(errorMiddleware)
 app.use(userMiddleware)
+app.use(noCache({ global: true }))
 app.use(
 	limit.middleware({
 		interval: 30000,

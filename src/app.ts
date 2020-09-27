@@ -99,7 +99,7 @@ app.on('track', async (episode: Episode) => {
 
 async function main() {
 	await Stat.bootstrap()
-	app.listen(3000, () => {
+	app.listen(process.env.PORT || 3000, () => {
 		console.log('May the Force be with you.')
 	})
 }

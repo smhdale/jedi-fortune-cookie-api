@@ -15,7 +15,7 @@ const errorMiddleware: Koa.Middleware = async (ctx, next) => {
 	try {
 		await next()
 	} catch (err) {
-		console.log(err)
+		if (typeof err !== 'number') console.error(err)
 		const status = typeof err === 'number' ? err : 500
 		const message = getErrorMessage(status)
 		ctx.status = status

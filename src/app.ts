@@ -42,7 +42,6 @@ router.get('/random', async (ctx) => {
 	if (user) {
 		const numEpisodes = await Episode.count(true)
 		const numSeen = user.seen.length
-		console.log({ numEpisodes, numSeen })
 		if (numSeen === numEpisodes) user = await User.clearSeen(user._id)
 	}
 

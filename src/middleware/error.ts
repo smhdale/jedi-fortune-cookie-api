@@ -3,7 +3,7 @@ import Koa from 'koa'
 const getErrorMessage = (status: number): string => {
 	switch (status) {
 		case 404:
-			return 'Perhaps the archives are incomplete.'
+			return 'Impossible. Perhaps the archives are incomplete.'
 		default:
 			return 'Do. Or do not. There is no try.'
 	}

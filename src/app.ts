@@ -1,20 +1,57 @@
 import Koa from 'koa'
 import Router from 'koa-router'
 import Episode from './lib/Episode'
+import User from './lib/User'
 
 import errorMiddleware from './middleware/error'
+import userMiddleware from './middleware/user'
 
 const app = new Koa()
 const router = new Router()
 
-// Error handler
+// Middlewares
 app.use(errorMiddleware)
+app.use(userMiddleware)
 
-// Routes
-router.get('/', async (ctx) => {
-	const episode = await Episode.findByRandomFortune()
-	if (episode) ctx.body = Episode.sanitise(episode)
-	else throw 404
+// Home page
+router.get('/', async (ctx, next) => {
+	ctx.body = { status: 200, message: 'Hello there.' }
+	await next()
+})
+
+// Random episode
+router.get('/random', async (ctx, next) => {
+	let user: User | undefined = ctx.state.user
+
+	// If user has seen every episode, reset seen array
+	if (user) {
+		const numEpisodes = await Episode.count(true)
+		const numSeen = user.seen.length
+		console.log({ numEpisodes, numSeen })
+		if (numSeen === numEpisodes) user = await User.clearSeen(user._id)
+	}
+
+	const doc = await Episode.findByRandomFortune(user?.seen)
+	if (!doc) throw 404
+
+	// If user, mark episode as seen
+	if (user) user = await User.markSeen(user._id, doc._id)
+
+	// Return episode
+	ctx.body = Episode.sanitise(doc)
+	await next()
+})
+
+// Exact episode
+router.get('/episode/:season/:episode', async (ctx, next) => {
+	const { season, episode } = ctx.params
+	const doc = await Episode.findBySeasonAndEpisode(
+		Number(season),
+		Number(episode)
+	)
+	if (!doc) throw 404
+	ctx.body = Episode.sanitise(doc)
+	await next()
 })
 
 // App

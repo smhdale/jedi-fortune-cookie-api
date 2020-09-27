@@ -14,6 +14,25 @@ export default abstract class Datastore<T extends any> {
 		}
 	}
 
+	protected async insert(document: T): Promise<T> {
+		return new Promise((resolve, reject) => {
+			this.db.insert(document, (err, doc) => {
+				if (err) reject(err)
+				else resolve(doc)
+			})
+		})
+	}
+
+	protected async updateOne(query: any, update: any): Promise<T> {
+		const opts: Nedb.UpdateOptions = { returnUpdatedDocs: true, multi: false }
+		return new Promise((resolve, reject) => {
+			this.db.update(query, update, opts, (err, updates, doc: T) => {
+				if (err) reject(err)
+				else resolve(doc)
+			})
+		})
+	}
+
 	protected async find(query: any): Promise<T[]> {
 		return new Promise((resolve, reject) => {
 			this.db.find(query, (err: Error | null, docs: T[]): void => {
@@ -25,9 +44,18 @@ export default abstract class Datastore<T extends any> {
 
 	protected async findOne(query: any): Promise<T | null> {
 		return new Promise((resolve, reject) => {
-			this.db.findOne(query, (err, doc): void => {
+			this.db.findOne(query, (err, doc: T): void => {
 				if (err) reject(err)
 				else resolve(doc)
+			})
+		})
+	}
+
+	protected async count(query: any): Promise<number> {
+		return new Promise((resolve, reject) => {
+			this.db.count(query, (err, count) => {
+				if (err) reject(err)
+				else resolve(count)
 			})
 		})
 	}

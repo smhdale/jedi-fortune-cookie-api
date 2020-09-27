@@ -24,14 +24,23 @@ class EpisodeStore extends Datastore<Episode> {
 		}
 	}
 
+	count(withFortune: boolean = false) {
+		const query: any = {}
+		if (withFortune) query.jediFortuneCookie = { $ne: null }
+		return super.count(query)
+	}
+
 	async findBySeasonAndEpisode(season: number, episode: number) {
 		const doc = await this.findOne({ season, episode })
 		if (doc !== null) return EpisodeStore.hydrate(doc)
 		else return doc
 	}
 
-	async findByRandomFortune() {
-		const docs = await this.find({ jediFortuneCookie: { $ne: null } })
+	async findByRandomFortune(ignore: string[] = []) {
+		const docs = await this.find({
+			_id: { $nin: ignore },
+			jediFortuneCookie: { $ne: null },
+		})
 		const count = docs.length
 		if (count) {
 			const index = Math.floor(Math.random() * count)

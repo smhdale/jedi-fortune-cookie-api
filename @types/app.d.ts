@@ -9,3 +9,15 @@ type Episode = {
 		imdb: string
 	}
 }
+
+type User = {
+	_id: string
+	seen: string[]
+}
+
+type Stat = {
+	_id: string
+	season: number
+	episode: number
+	views: number
+}

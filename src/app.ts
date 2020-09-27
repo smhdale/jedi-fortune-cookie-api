@@ -83,7 +83,11 @@ app.on('track', async (episode: Episode) => {
 	}
 })
 
-app.listen(3000, async () => {
+async function main() {
 	await Stat.bootstrap()
-	console.log('May the Force be with you.')
-})
+	app.listen(3000, () => {
+		console.log('May the Force be with you.')
+	})
+}
+
+main()

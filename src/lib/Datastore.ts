@@ -33,9 +33,14 @@ export default abstract class Datastore<T extends any> {
 		})
 	}
 
-	protected async find(query: any): Promise<T[]> {
+	protected async find(
+		query: any,
+		sort?: Record<string, number>
+	): Promise<T[]> {
 		return new Promise((resolve, reject) => {
-			this.db.find(query, (err: Error | null, docs: T[]): void => {
+			const cursor = this.db.find(query)
+			if (sort) cursor.sort(sort)
+			cursor.exec((err: Error | null, docs: T[]): void => {
 				if (err) reject(err)
 				else resolve(docs)
 			})

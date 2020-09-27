@@ -54,6 +54,15 @@ router.get('/episode/:season/:episode', async (ctx, next) => {
 	await next()
 })
 
+// Entire season
+router.get('/season/:season', async (ctx, next) => {
+	const { season } = ctx.params
+	const docs = await Episode.findBySeason(Number(season))
+	if (!docs.length) throw 404
+	ctx.body = docs.map(Episode.sanitise)
+	await next()
+})
+
 // App
 app.use(router.routes()).use(router.allowedMethods())
 app.listen(3000, async () => {

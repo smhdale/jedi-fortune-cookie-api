@@ -30,6 +30,11 @@ class EpisodeStore extends Datastore<Episode> {
 		return super.count(query)
 	}
 
+	async findBySeason(season: number) {
+		const docs = await this.find({ season }, { episode: 1 })
+		return docs.map(EpisodeStore.hydrate)
+	}
+
 	async findBySeasonAndEpisode(season: number, episode: number) {
 		const doc = await this.findOne({ season, episode })
 		if (doc !== null) return EpisodeStore.hydrate(doc)

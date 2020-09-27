@@ -76,7 +76,7 @@ app.use(async () => {
 })
 
 app.on('track', (episode: Episode) => {
-	Stat.track(episode.season, episode.episode)
+	Stat.track(episode)
 })
 
 app.listen(3000, async () => {

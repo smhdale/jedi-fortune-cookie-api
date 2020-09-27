@@ -2,25 +2,19 @@ import Datastore from './Datastore'
 import Episode from './Episode'
 
 class StatStore extends Datastore<Stat> {
-	private async bootstrapEpisode(season: number, episode: number) {
-		const existing = await this.findOne({ season, episode })
-		if (!existing) {
-			const _id = [season, episode].join('.')
-			await this.insert({ _id, season, episode, views: 0 })
-		}
+	private async bootstrapEpisode({ _id }: Episode) {
+		const existing = await this.findOne({ _id })
+		if (!existing) await this.insert({ _id, views: 0 })
 	}
 
 	async bootstrap() {
 		const episodes = await Episode.findAll()
-		return Promise.all(
-			episodes.map((ep) => {
-				return this.bootstrapEpisode(ep.season, ep.episode)
-			})
-		)
+		const bootstrap = this.bootstrapEpisode.bind(this)
+		return Promise.all(episodes.map(bootstrap))
 	}
 
-	track(season: number, episode: number) {
-		this.updateOne({ season, episode }, { $inc: { views: 1 } })
+	track({ _id }: Episode) {
+		this.updateOne({ _id }, { $inc: { views: 1 } })
 	}
 }
 

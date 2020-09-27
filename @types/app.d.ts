@@ -17,7 +17,5 @@ type User = {
 
 type Stat = {
 	_id: string
-	season: number
-	episode: number
 	views: number
 }
